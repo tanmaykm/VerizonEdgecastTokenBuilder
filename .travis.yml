@@ -1,0 +1,39 @@
+language: julia
+os:
+  - linux
+julia:
+  - 1.0
+notifications:
+  email: false
+git:
+  depth: 99999999
+cache:
+  timeout: 1000
+  directories:
+    - downloads
+env:
+  global:
+    - BINARYBUILDER_DOWNLOADS_CACHE=downloads
+    - BINARYBUILDER_AUTOMATIC_APPLE=false
+sudo: required
+
+# Before anything else, get the latest versions of things
+before_script:
+  - julia -e 'using Pkg; pkg"add BinaryProvider"; pkg"add BinaryBuilder#master"; Pkg.build()'
+
+script:
+  - julia build_tarballs.jl
+
+
+deploy:
+    provider: releases
+    api_key:
+        # Note; this api_key is only valid for tanmaykm/VerizonEdgecastTokenBuilder; you need
+        # to make your own: https://docs.travis-ci.com/user/deployment/releases/
+        secure: LAkLQ3rkr5HwI+4olcevha6h82Ek+tEzbh87y59x8BFt9zILs/3lnYaCd+hmbZtAtu3yoytSJNSS/BTdIXNuJftS87hT41o9eXNpHj+APuZzwRbQxFe0KIVIfvODDdWcgnL0ieZHW+EkY8F+fCD0w++V/4Rme5hI/gFOH0QHZ2vH9YXfkTvq83+FiTXur6GserUjciQlXpT9OqSIU56eCaN6nMnKCTO/wu2tpiD6i7x3eeZIIKjDwl1ZQ1F5+sgxiANDnslJfc2V/+jVb4C4Vlwb1yGUny2G839iH32drvcymN5uEOCUmBpt4Fh5bz4aRT7GRbP7HNzz/PdsGDoHCrqKglXXyXhy+GT1x/a1lmP6t5uMRPflDMGKq+TuW6eoAz9rgrP4QbOHyN4WyJMM0YuhTYGPebW0V5u1TtGyBCQSr8obcsaC/6866PtsDU5oUIobAOBdJW/kTOOWVdIdLQetJBt3voFpBpUvgduwHj51ay2/EDmRlxIG3G5EglOkomlU34l0FXKKolwSlG49jTLTtheF37dYcmyeuBMdZH3YYMvE1uLqfZLqJrcS5LQmpC4ifh3+PPQzfOIutmHIXCo6E5IyLZcnU3+uTpPDu5BXH5BMw7LCjvub+RkI9Bpou6BkXgGnooY+hQ33WbT3yjKxzYfhCKwfoaa9YCalkEk=
+    file_glob: true
+    file: products/*
+    skip_cleanup: true
+    on:
+        repo: tanmaykm/VerizonEdgecastTokenBuilder
+        tags: true
